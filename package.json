@@ -1,0 +1,41 @@
+{
+  "name": "oxlint-rs-npm",
+  "version": "0.2.16",
+  "type": "module",
+  "main": "prepare.js",
+  "description": "Linter for the JavaScript Oxidation Compiler",
+  "author": "Davlatjon Shavkatov <opensource@dalisoft.uz>, Boshen <boshenc@gmail.com>",
+  "files": [
+    "prepare.js"
+  ],
+  "bin": {
+    "oxlint": "oxlint"
+  },
+  "engines": {
+    "node": ">=18.19.1"
+  },
+  "scripts": {
+    "postinstall": "node ./prepare.js"
+  },
+  "keywords": [
+    "javascript",
+    "rust",
+    "parser",
+    "typescript",
+    "compiler",
+    "linter",
+    "minifier"
+  ],
+  "dependencies": {
+    "binary2npm": "^0.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalisoft/oxlint-rs-npm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dalisoft/oxlint-rs-npm/issues"
+  },
+  "homepage": "https://github.com/dalisoft/oxlint-rs-npm#readme",
+  "license": "Apache-2.0"
+}
