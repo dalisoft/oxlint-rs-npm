@@ -1,6 +1,6 @@
 # oxlint-rs-npm
 
-Pluggable and configurable code formatting platform written in Rust.
+Linter for the JavaScript Oxidation Compiler
 
 > **npm** integration for [oxlint-rs](https://github.com/oxc-project/oxc) without any overhead so using full power of `oxlint` CLI performance and feature
 
