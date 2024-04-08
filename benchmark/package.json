@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "oxlint": "^0.2.16",
+    "oxlint-rs-npm": ".."
+  }
+}
