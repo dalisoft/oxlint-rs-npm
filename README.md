@@ -11,11 +11,11 @@ Look at [official documentation](https://github.com/oxc-project/oxc)
 ## Installation
 
 ```sh
-npm install -g oxlint-rs-npm
+npm install dalisoft/oxlint-rs-npm -D
 # or
-yarn install -g oxlint-rs-npm
+yarn install dalisoft/oxlint-rs-npm -D
 # or
-bun add -g oxlint-rs-npm
+bun add dalisoft/oxlint-rs-npm -D
 ```
 
 ## Environment variables
