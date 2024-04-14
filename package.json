@@ -1,6 +1,6 @@
 {
   "name": "oxlint-rs-npm",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "type": "module",
   "main": "prepare.js",
   "description": "Linter for the JavaScript Oxidation Compiler",
@@ -27,7 +27,7 @@
     "minifier"
   ],
   "dependencies": {
-    "binary2npm": "^0.3.1"
+    "binary2npm": "https://github.com/dalisoft/binary2npm#v0.3.2"
   },
   "repository": {
     "type": "git",
