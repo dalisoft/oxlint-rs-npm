@@ -64,10 +64,8 @@ jobs:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(echo "${tag_name}" | tr -d 'v')
-          sed -i.bak "s/\"version\": \"[^\"]*\",/\"version\": \"$VERSION\",/" "package.json"
-          git add package.json
-          git commit -m "Upgrade ${project} to ${tag_name}"
+          npm config set sign-git-tag true
+          npm version $(echo "${tag_name}" | tr -d 'v') -m "Upgrade ${project} to ${tag_name}"
           git checkout -b remote-upgrade
           git push origin remote-upgrade
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
