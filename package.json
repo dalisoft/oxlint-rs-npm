@@ -2,7 +2,7 @@
   "name": "oxlint-rs-npm",
   "version": "0.2.18",
   "type": "module",
-  "main": "prepare.js",
+  "main": "bin.js",
   "description": "Linter for the JavaScript Oxidation Compiler",
   "author": "Davlatjon Shavkatov <opensource@dalisoft.uz>, Boshen <boshenc@gmail.com>",
   "files": [
