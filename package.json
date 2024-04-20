@@ -6,10 +6,11 @@
   "description": "Linter for the JavaScript Oxidation Compiler",
   "author": "Davlatjon Shavkatov <opensource@dalisoft.uz>, Boshen <boshenc@gmail.com>",
   "files": [
-    "prepare.js"
+    "prepare.js",
+    "bin.js"
   ],
   "bin": {
-    "oxlint": "oxlint"
+    "oxlint": "bin.js"
   },
   "engines": {
     "node": ">=18.19.1"
