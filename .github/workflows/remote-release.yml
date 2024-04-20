@@ -50,7 +50,7 @@ jobs:
         id: release_last_tag
         shell: bash
         run: |
-          TAG_NAME=$(curl -s "https://api.github.com/repos/${repository}/releases/latest" | grep 'tag_name' | cut -d ':' -f2 | cut -d '_' -f2 | rev | cut -c3- | rev | xargs)
+          TAG_NAME=$(curl -s "https://api.github.com/repos/${repository}/releases/latest" | grep 'tag_name' | cut -d ':' -f2 | cut -d '_' -f2 | rev | cut -c3- | rev | tr '"' 'v' | xargs)
           echo "TAG=$TAG_NAME" >> $GITHUB_OUTPUT
       - name: Verify tag
         id: release_verify_tag
