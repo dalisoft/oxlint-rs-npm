@@ -58,11 +58,10 @@ jobs:
           gpg-connect-agent reloadagent /bye
 
           echo "" | gpg --quiet --passphrase "$GPG_PASSPHRASE" --batch --pinentry-mode loopback --sign >/dev/null
-      - name: PR & Release
+      - name: PR & Tagging
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sed -i.bak "s/\"version\": \"[^\"]*\",/\"version\": \"$(echo "${tag_name}" | tr -d 'v')\",/" "package.json"
           git add package.json
@@ -72,3 +71,10 @@ jobs:
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
           gh pr merge remote-upgrade --squash --delete-branch
           git tag -s "${tag_name}" --message "Release ${project} ${tag_name}"
+          git push --tags
+      - name: Release
+        shell: bash
+        env:
+          tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+        run: |
+          gh release create "${tag_name}" --generate-notes
