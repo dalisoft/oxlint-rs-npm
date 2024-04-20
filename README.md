@@ -10,12 +10,15 @@ Look at [official documentation](https://github.com/oxc-project/oxc)
 
 ## Motivation
 
-The tools are itself fast but `npm` `bin.js` for **Rust** projects adds overhead which makes startup time slower than expected. This solution solves that overhead and makes **Rust** projects run as excepted.
-See [oxc#2920](https://github.com/oxc-project/oxc/pull/2920) for more information
+The tools inherently exhibit rapid performance, yet the `npm` `bin.js` script introduces a discernible overhead when deployed for **Rust** projects, leading to suboptimal startup times. This solution effectively addresses and eliminates this overhead, ensuring that **Rust** projects operate with the expected efficiency. For detailed insights, please refer to the pull requests [oxc#2920](https://github.com/oxc-project/oxc/pull/2920).
 
-> This package can only used by direct CLI usage or as VSCode extension, no more
+> > This package is specifically designed for direct Command-Line Interface (CLI) interaction or as an extension for Visual Studio Code.
 
-**No `npx`, `bunx` support provided nor will be**
+### The functionality for npx or bunx is not included and is not anticipated to be incorporated in the future
+
+## How this is fast?
+
+This project leverages the [binary2npm](https://github.com/dalisoft/binary2npm) utility to streamline the acquisition of platform-specific binaries. The binaries provided by the author are highly optimized, surpassing the performance of the traditional **Node.js** `bin.js` approach. By invoking the binaries directly, we circumvent unnecessary overhead, resulting in significantly reduced startup times and enhanced efficiency.
 
 ## Installation
 
