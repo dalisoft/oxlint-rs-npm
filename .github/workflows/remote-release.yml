@@ -81,6 +81,7 @@ jobs:
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git push --tags
           gh release create --verify-tag "${tag_name}" --generate-notes
