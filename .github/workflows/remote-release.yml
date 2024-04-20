@@ -24,9 +24,9 @@ jobs:
       - name: Auth for GitHub CLI
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "${GH_TOKEN}" | gh auth login --with-token
+          echo "${AUTH_TOKEN}" | gh auth login --with-token
       - name: Get latest release
         id: release_last_tag
         shell: bash
