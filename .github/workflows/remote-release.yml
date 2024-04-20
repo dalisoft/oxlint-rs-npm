@@ -21,12 +21,6 @@ jobs:
           fetch-tags: true
           ref: master
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Auth for GitHub CLI
-        shell: bash
-        env:
-          AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "${AUTH_TOKEN}" | gh auth login --with-token
       - name: Get latest release
         id: release_last_tag
         shell: bash
@@ -75,13 +69,16 @@ jobs:
           npm version "$(echo "${tag_name}" | tr -d 'v')" -m "Upgrade ${project} to ${tag_name}"
           git checkout -b remote-upgrade
           git push origin remote-upgrade --force
-          gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
-          gh pr merge remote-upgrade --squash --delete-branch
+          git checkout master
+          git rebase remote-upgrade
+          git push
+          git branch -d remote-upgrade
+          git push origin --delete remote-upgrade
       - name: Release
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git pull --rebase
           git push --tags
           gh release create --verify-tag "${tag_name}" --generate-notes
