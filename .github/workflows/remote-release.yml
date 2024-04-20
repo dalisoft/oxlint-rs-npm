@@ -43,15 +43,15 @@ jobs:
           GPG_KEY: ${{ secrets.GPG_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          git config --local user.email "$GIT_EMAIL"
-          git config --local user.name "$GIT_USERNAME"
+          git config --global user.email "$GIT_EMAIL"
+          git config --global user.name "$GIT_USERNAME"
 
           echo "$GPG_KEY" | base64 --decode | gpg --quiet --batch --import
 
-          git config --local commit.gpgsign true
-          git config --local user.signingkey "$GPG_KEY_ID"
-          git config --local tag.forceSignAnnotated true
-          git config --local gpg.program gpg
+          git config --global commit.gpgsign true
+          git config --global user.signingkey "$GPG_KEY_ID"
+          git config --global tag.forceSignAnnotated true
+          git config --global gpg.program gpg
 
           echo "allow-loopback-pinentry" >>"$HOME/gpg-agent.conf"
           echo "pinentry-mode loopback" >>"$HOME/gpg.conf"
@@ -62,6 +62,7 @@ jobs:
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sed -i.bak "s/\"version\": \"[^\"]*\",/\"version\": \"$(echo "${tag_name}" | tr -d 'v')\",/" "package.json"
           git add package.json
@@ -73,7 +74,7 @@ jobs:
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
-          GPG_PASSPHRASE: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr review remote-upgrade --approve
           gh pr merge remote-upgrade --sqaush --delete-branch
