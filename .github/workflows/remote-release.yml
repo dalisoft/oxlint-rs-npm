@@ -76,6 +76,6 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr review remote-upgrade --approve
-          gh pr merge remote-upgrade --sqaush
+          gh pr merge remote-upgrade --sqaush --delete-branch
           git checkout master
           git sign -s "${tag_name}" --message "Release ${project} ${tag_name}"
