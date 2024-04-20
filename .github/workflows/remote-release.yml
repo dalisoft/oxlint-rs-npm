@@ -72,6 +72,7 @@ jobs:
           git push origin remote-upgrade
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
           gh pr merge remote-upgrade --squash --delete-branch
+          git pull --rebase
           git tag -s "${tag_name}" --message "Release ${project} ${tag_name}"
           git push --tags
       - name: Release
