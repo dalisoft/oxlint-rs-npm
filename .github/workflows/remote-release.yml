@@ -65,7 +65,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm config set sign-git-tag true
-          npm version $(echo "${tag_name}" | tr -d 'v') -m "Upgrade ${project} to ${tag_name}"
+          npm version "$(echo "${tag_name}" | tr -d 'v')" -m "Upgrade ${project} to ${tag_name}"
           git checkout -b remote-upgrade
           git push origin remote-upgrade
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
