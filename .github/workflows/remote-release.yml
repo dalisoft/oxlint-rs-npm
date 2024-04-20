@@ -71,7 +71,7 @@ jobs:
           npm version "$(echo "${tag_name}" | tr -d 'v')" -m "Upgrade ${project} to ${tag_name}"
           git checkout -b remote-upgrade
           git push origin remote-upgrade --force
-          gh pr create -H remote-upgrade
+          gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
           git checkout master
           git rebase remote-upgrade
           git push
