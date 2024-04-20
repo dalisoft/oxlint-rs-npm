@@ -84,4 +84,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git push --tags
-          gh release create --verify-tag "${TAG}" --generate-notes
+          gh release create --verify-tag "${TAG}" --notes "Upgrade **${project}** to \`${TAG}\`"
