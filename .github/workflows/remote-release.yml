@@ -21,7 +21,7 @@ jobs:
           fetch-tags: true
           ref: master
           persist-credentials: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
       - name: Get latest release
         id: release_last_tag
         shell: bash
@@ -65,6 +65,7 @@ jobs:
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm config set sign-git-tag true
           npm version "$(echo "${tag_name}" | tr -d 'v')" -m "Upgrade ${project} to ${tag_name}"
