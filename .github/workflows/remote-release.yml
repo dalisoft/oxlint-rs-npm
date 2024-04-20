@@ -1,0 +1,67 @@
+name: Remote fetch and apply release
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  remote-release:
+    timeout-minutes: 5
+
+    runs-on: ubuntu-22.04
+    if: github.actor == 'dependabot[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: oxlint Get latest release
+        id: oxlint_release_last_tag
+        shell: bash
+        run: |
+          TAG_NAME=$(curl -s https://api.github.com/repos/oxc-project/oxc/releases/latest | grep 'tag_name' | cut -d ':' -f2 | cut -d '_' -f2)
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+      - name: Verify tag
+        id: release_verify_tag
+        shell: bash
+        env:
+          tag_name: ${{ steps.oxlint_release_last_tag.outputs.tag_name }}
+        run: |
+          VERIFY_RESULT=$(git tag -v ${tag_name} || echo "No new release")
+          echo "verify=$VERIFY_RESULT" >> $GITHUB_OUTPUT
+      - name: Configure Git and GPG
+        shell: bash
+        if: ${{ steps.release_verify_tag.outputs.verify }} != 'No new release'
+        env:
+          GIT_USERNAME: ${{ vars.GIT_USERNAME }}
+          GIT_EMAIL: ${{ vars.GIT_EMAIL }}
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          git config --local user.email "$GIT_EMAIL"
+          git config --local user.name "$GIT_USERNAME"
+
+          echo "$GPG_KEY" | base64 --decode | gpg --homedir "$HOME" --quiet --batch --import
+
+          git config --local commit.gpgsign true
+          git config --local user.signingkey "$GPG_KEY_ID"
+          git config --local tag.forceSignAnnotated true
+          git config --local gpg.program gpg
+
+          echo "allow-loopback-pinentry" >>"$HOME/gpg-agent.conf"
+          echo "pinentry-mode loopback" >>"$HOME/gpg.conf"
+          gpg-connect-agent --homedir "$HOME" reloadagent /bye
+
+          echo "" | gpg --homedir "$HOME" --quiet --passphrase "$GPG_PASSPHRASE" --batch --pinentry-mode loopback --sign >/dev/null
+      - name: Release
+        shell: bash
+        if: ${{ steps.release_verify_tag.outputs.verify }} != 'No new release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          tag_name: ${{ steps.oxlint_release_last_tag.outputs.tag_name }}
+        run: |
+          git tag -s ${tag_name} --message 'Release from remote'
+          npm version $(echo ${tag_name} | tr -d 'v')
