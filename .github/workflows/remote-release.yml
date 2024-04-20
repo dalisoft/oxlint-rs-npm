@@ -19,6 +19,8 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: master
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get latest release
         id: release_last_tag
         shell: bash
