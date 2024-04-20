@@ -50,18 +50,19 @@ jobs:
         id: release_last_tag
         shell: bash
         run: |
-          TAG_NAME=$(curl -s "https://api.github.com/repos/${repository}/releases/latest" | grep 'tag_name' | cut -d ':' -f2 | cut -d '_' -f2 | rev | cut -c3- | rev)
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          TAG_NAME=$(curl -s "https://api.github.com/repos/${repository}/releases/latest" | grep 'tag_name' | cut -d ':' -f2 | cut -d '_' -f2 | rev | cut -c3- | rev | xargs)
+          echo "TAG=$TAG_NAME" >> $GITHUB_OUTPUT
       - name: Verify tag
         id: release_verify_tag
         shell: bash
         env:
-          tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          TAG: ${{ steps.release_last_tag.outputs.TAG }}
         run: |
-          VERIFY_RESULT=$(git tag -v "${tag_name}" || echo "No new release")
-          echo "verify=$VERIFY_RESULT" >> $GITHUB_OUTPUT
+          VERIFY_RESULT=$(git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1 && echo 'EXISTS' || echo 'OK')
+          echo "RELEASE_VERIFY=$VERIFY_RESULT" >> $GITHUB_OUTPUT
       - name: Update as remote
         shell: bash
+        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY }} == 'OK'
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -78,6 +79,7 @@ jobs:
           git push origin --delete remote-upgrade
       - name: Release
         shell: bash
+        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY }} == 'OK'
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
