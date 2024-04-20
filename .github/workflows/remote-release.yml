@@ -62,7 +62,7 @@ jobs:
           echo "RELEASE_VERIFY=$VERIFY_RESULT" >> $GITHUB_OUTPUT
       - name: Update as remote
         shell: bash
-        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY }} == 'OK'
+        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY == 'OK' }}
         env:
           TAG: ${{ steps.release_last_tag.outputs.TAG }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -78,7 +78,7 @@ jobs:
           git push origin --delete remote-upgrade
       - name: Release
         shell: bash
-        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY }} == 'OK'
+        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY == 'OK' }}
         env:
           TAG: ${{ steps.release_last_tag.outputs.TAG }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
