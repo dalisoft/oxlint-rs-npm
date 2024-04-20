@@ -22,7 +22,7 @@ jobs:
           ref: master
           persist-credentials: true
           token: ${{ secrets.GH_TOKEN }}
-      - name: Configure Git and GPG
+      - name: Run script for fetch, test and release
         shell: bash
         env:
           GIT_USERNAME: ${{ vars.GIT_USERNAME }}
@@ -30,58 +30,5 @@ jobs:
           GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          git config --global user.email "$GIT_EMAIL"
-          git config --global user.name "$GIT_USERNAME"
-
-          echo "$GPG_KEY" | base64 --decode | gpg --quiet --batch --import
-
-          git config --global commit.gpgsign true
-          git config --global user.signingkey "$GPG_KEY_ID"
-          git config --global tag.forceSignAnnotated true
-          git config --global gpg.program gpg
-
-          echo "allow-loopback-pinentry" >>"$HOME/gpg-agent.conf"
-          echo "pinentry-mode loopback" >>"$HOME/gpg.conf"
-          gpg-connect-agent reloadagent /bye
-
-          echo "" | gpg --quiet --passphrase "$GPG_PASSPHRASE" --batch --pinentry-mode loopback --sign >/dev/null
-      - name: Get latest release
-        id: release_last_tag
-        shell: bash
-        run: |
-          TAG_NAME=$(curl -s "https://api.github.com/repos/${repository}/releases/latest" | grep 'tag_name' | cut -d ':' -f2 | cut -d '_' -f2 | rev | cut -c3- | rev | tr '"' 'v' | xargs)
-          echo "TAG=$TAG_NAME" >> $GITHUB_OUTPUT
-      - name: Verify tag
-        id: release_verify_tag
-        shell: bash
-        env:
-          TAG: ${{ steps.release_last_tag.outputs.TAG }}
-        run: |
-          VERIFY_RESULT=$(git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1 && echo 'EXISTS' || echo 'OK')
-          echo "RELEASE_VERIFY=$VERIFY_RESULT" >> $GITHUB_OUTPUT
-      - name: Update as remote
-        shell: bash
-        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY == 'OK' }}
-        env:
-          TAG: ${{ steps.release_last_tag.outputs.TAG }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          npm version "$(echo "${TAG}" | tr -d 'v')" -m "Upgrade ${project} to ${TAG}" --sign-git-tag
-          git checkout -b remote-upgrade
-          git push origin remote-upgrade --force
-          gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${TAG}"
-          git checkout master
-          git rebase remote-upgrade
-          git push
-          git branch -d remote-upgrade
-          git push origin --delete remote-upgrade
-      - name: Release
-        shell: bash
-        if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY == 'OK' }}
-        env:
-          TAG: ${{ steps.release_last_tag.outputs.TAG }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          git push --tags
-          gh release create --verify-tag "${TAG}" --notes "Upgrade **${project}** to \`${TAG}\`"
+        run: curl -fsSL https://raw.githubusercontent.com/dalisoft/ci-scripts/master/fetch-and-release-update.sh | sh
