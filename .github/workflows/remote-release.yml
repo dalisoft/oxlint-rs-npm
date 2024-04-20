@@ -67,8 +67,7 @@ jobs:
           TAG: ${{ steps.release_last_tag.outputs.TAG }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          npm config set sign-git-tag true
-          npm version "$(echo "${TAG}" | tr -d 'v')" -m "Upgrade ${project} to ${TAG}"
+          npm version "$(echo "${TAG}" | tr -d 'v')" -m "Upgrade ${project} to ${TAG}" --sign-git-tag
           git checkout -b remote-upgrade
           git push origin remote-upgrade --force
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${TAG}"
