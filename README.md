@@ -8,6 +8,11 @@ Linter for the JavaScript Oxidation Compiler
 
 Look at [official documentation](https://github.com/oxc-project/oxc)
 
+## Motivation
+
+The tools are itself fast but `npm` `bin.js` for **Rust** projects adds overhead which makes startup time slower than expected. This solution solves that overhead and makes **Rust** projects run as excepted.
+See [oxc#2920](https://github.com/oxc-project/oxc/pull/2920) for more information
+
 ## Installation
 
 ```sh
