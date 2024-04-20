@@ -70,5 +70,5 @@ jobs:
           git checkout -b remote-upgrade
           git push origin remote-upgrade
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
-          gh pr merge remote-upgrade --sqaush --delete-branch
+          gh pr merge remote-upgrade --squash --delete-branch
           git sign -s "${tag_name}" --message "Release ${project} ${tag_name}"
