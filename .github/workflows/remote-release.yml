@@ -46,7 +46,7 @@ jobs:
           git config --local user.email "$GIT_EMAIL"
           git config --local user.name "$GIT_USERNAME"
 
-          echo "$GPG_KEY" | base64 --decode | gpg --homedir "$HOME" --quiet --batch --import
+          echo "$GPG_KEY" | base64 --decode | gpg --quiet --batch --import
 
           git config --local commit.gpgsign true
           git config --local user.signingkey "$GPG_KEY_ID"
@@ -55,9 +55,9 @@ jobs:
 
           echo "allow-loopback-pinentry" >>"$HOME/gpg-agent.conf"
           echo "pinentry-mode loopback" >>"$HOME/gpg.conf"
-          gpg-connect-agent --homedir "$HOME" reloadagent /bye
+          gpg-connect-agent reloadagent /bye
 
-          echo "" | gpg --homedir "$HOME" --quiet --passphrase "$GPG_PASSPHRASE" --batch --pinentry-mode loopback --sign >/dev/null
+          echo "" | gpg --quiet --passphrase "$GPG_PASSPHRASE" --batch --pinentry-mode loopback --sign >/dev/null
       - name: Create PR for Release
         shell: bash
         env:
