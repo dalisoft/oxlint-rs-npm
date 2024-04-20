@@ -31,7 +31,7 @@ jobs:
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
         run: |
-          VERIFY_RESULT=$(git tag -v ${tag_name} || echo "No new release")
+          VERIFY_RESULT=$(git tag -v "${tag_name}" || echo "No new release")
           echo "verify=$VERIFY_RESULT" >> $GITHUB_OUTPUT
       - name: Configure Git and GPG
         shell: bash
@@ -63,7 +63,7 @@ jobs:
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
         run: |
-          npm version $(echo ${tag_name} | tr -d 'v')
+          npm version $(echo "${tag_name}" | tr -d 'v')
           git add package.json
           git commit -m "Upgrade ${project} to ${tag_name}"
           git checkout -b remote-upgrade
@@ -78,4 +78,4 @@ jobs:
           gh pr review remote-upgrade --approve
           gh pr merge remote-upgrade --sqaush
           git checkout master
-          git sign -s ${tag_name} --message "Release ${project} ${tag_name}"
+          git sign -s "${tag_name}" --message "Release ${project} ${tag_name}"
