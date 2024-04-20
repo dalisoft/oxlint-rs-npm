@@ -64,14 +64,14 @@ jobs:
         shell: bash
         if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY }} == 'OK'
         env:
-          tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          TAG: ${{ steps.release_last_tag.outputs.TAG }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm config set sign-git-tag true
-          npm version "$(echo "${tag_name}" | tr -d 'v')" -m "Upgrade ${project} to ${tag_name}"
+          npm version "$(echo "${TAG}" | tr -d 'v')" -m "Upgrade ${project} to ${TAG}"
           git checkout -b remote-upgrade
           git push origin remote-upgrade --force
-          gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
+          gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${TAG}"
           git checkout master
           git rebase remote-upgrade
           git push
@@ -81,8 +81,8 @@ jobs:
         shell: bash
         if: ${{ steps.release_verify_tag.outputs.RELEASE_VERIFY }} == 'OK'
         env:
-          tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
+          TAG: ${{ steps.release_last_tag.outputs.TAG }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git push --tags
-          gh release create --verify-tag "${tag_name}" --generate-notes
+          gh release create --verify-tag "${TAG}" --generate-notes
