@@ -6,7 +6,7 @@ export PATH="./node_modules/.bin:$PATH"
 
 setup() {
   # install nodejs dependencies
-  npm ci
+  npm ci --no-audit
 
   # copy test js
   cp ../prepare.js ./prepare.js
