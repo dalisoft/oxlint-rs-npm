@@ -58,7 +58,7 @@ jobs:
           gpg-connect-agent reloadagent /bye
 
           echo "" | gpg --quiet --passphrase "$GPG_PASSPHRASE" --batch --pinentry-mode loopback --sign >/dev/null
-      - name: Create PR for Release
+      - name: PR & Release
         shell: bash
         env:
           tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
@@ -70,13 +70,5 @@ jobs:
           git checkout -b remote-upgrade
           git push origin remote-upgrade
           gh pr create -B master -H remote-upgrade --title "Upgrade ${project}" --body "Upgrade ${project} to ${tag_name}"
-      - name: Approve PR for Release
-        shell: bash
-        env:
-          tag_name: ${{ steps.release_last_tag.outputs.tag_name }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review remote-upgrade --approve
           gh pr merge remote-upgrade --sqaush --delete-branch
-          git checkout master
           git sign -s "${tag_name}" --message "Release ${project} ${tag_name}"
