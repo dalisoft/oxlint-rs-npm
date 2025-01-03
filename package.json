@@ -1,6 +1,6 @@
 {
   "name": "oxlint-rs-npm",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "type": "module",
   "main": "prepare.js",
   "description": "Linter for the JavaScript Oxidation Compiler",
